@@ -13,33 +13,19 @@
 [GitHub - RT622](https://github.com/RT622/2gou)
 
 #### <font style="color:#2F8EF4;">创建应用</font>
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/54515742/1769319780910-6f8da314-008e-46f2-a2ce-f0cabfb19701.png)
-
+![](/blogs/yysuni/b48dc5991141a949.webp)
 #####  点击自己的【<font style="color:#DF2A3F;">头像</font>】找到【<font style="color:#DF2A3F;">设置</font>】，进入【<font style="color:#DF2A3F;">设置</font>】页面，然后选择左侧栏最下面的【<font style="color:#DF2A3F;">开发者选项</font>】
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322580465-836ac6f1-22fa-4564-b3b5-856fc708a43e.webp)
-
+![](/blogs/yysuni/c5b0952ecf9c9e49.webp)
 #####   点击创建【<font style="color:#DF2A3F;">Github 应用</font>】
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322694268-b6ad7ae1-4210-40d0-8eba-26bbc5a987e9.webp)
-
+![](/blogs/yysuni/370cf489eacf6c3e.webp)
 ##### 验证密码
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322713505-1dffb824-676d-454c-86f8-7f927d1780c9.webp)
-
+![](/blogs/yysuni/741b83207f05774a.webp)
 ##### 带<font style="color:#DF2A3F;">*</font>号的输入框必须填，没什么可填的可以瞎填
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322776252-a1749244-800e-4613-a452-b5e67d5a6ebb.webp)
-
+![](/blogs/yysuni/efe6516cdfdf86f0.webp)
 ##### 取消打钩，展开仓库权限，选择 <font style="color:#DF2A3F;">Contents</font>权限设置选择读取和写入权限 <font style="color:#DF2A3F;">Read and write </font>
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322907600-4995dd41-4867-4176-b689-49462cf7aacb.webp)
-
+![](/blogs/yysuni/dc985ee16c7581bb.webp)
 ##### 选择 <font style="color:#DF2A3F;">Only on this account</font> 点击 <font style="color:#DF2A3F;">CreateHub APP</font> 创建 Github 应用
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/webp/54515742/1769322989493-a8ed1bb3-f6ca-4e89-8ebf-7b865ce24364.webp)
-
+![](/blogs/yysuni/c5a8475eb7d0576e.webp)
 ##### 创建一个记事本，记录一下变量，等下用
 <font style="color:#DF2A3F;">NEXT_PUBLIC_GITHUB_OWNER</font>=<font style="color:#DF2A3F;">RT622</font>（此处填写图中 Owned by 中的 ID，不要@）
 
@@ -55,8 +41,7 @@
 
 #### <font style="color:#2F8EF4;">Vercel 平台托管项目</font>
 ##### 打开[https://vercel.com/](https://vercel.com/)没有账号，注册一个账号，然后绑定你的 Github， 或者用你 Github 直接登录。
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/54515742/1769324518447-c4774df8-6cc7-44a1-a2ee-098aa491ced3.png)
+
 
 ##### 新建项目
 <!-- 这是一张图片，ocr 内容为： -->
