@@ -1,224 +1,188 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
-import { toast } from 'sonner'
-import { useMarkdownRender } from '@/hooks/use-markdown-render'
-import { pushAbout, type AboutData } from './services/push-chara'
-import { useAuthStore } from '@/hooks/use-auth'
+import Link from 'next/link'
+import Image from 'next/image'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
-import LikeButton from '@/components/like-button'
-import GithubSVG from '@/svgs/github.svg'
-import initialData from './list.json'
+import { useState } from 'react'
+import { useBlogIndex } from '@/hooks/use-blog-index'
 
 export default function Page() {
-	const [data, setData] = useState<AboutData>(initialData as AboutData)
-	const [originalData, setOriginalData] = useState<AboutData>(initialData as AboutData)
-	const [isEditMode, setIsEditMode] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
-	const [isPreviewMode, setIsPreviewMode] = useState(false)
-	const keyInputRef = useRef<HTMLInputElement>(null)
-
-	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
-	const { content, loading } = useMarkdownRender(data.content)
-	const hideEditButton = siteContent.hideEditButton ?? false
-
-	const handleChoosePrivateKey = async (file: File) => {
-		try {
-			const text = await file.text()
-			setPrivateKey(text)
-			await handleSave()
-		} catch (error) {
-			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
-		}
-	}
-
-	const handleSaveClick = () => {
-		if (!isAuth) {
-			keyInputRef.current?.click()
-		} else {
-			handleSave()
-		}
-	}
-
-	const handleEnterEditMode = () => {
-		setIsEditMode(true)
-		setIsPreviewMode(false)
-	}
-
-	const handleSave = async () => {
-		setIsSaving(true)
-
-		try {
-			await pushAbout(data)
-
-			setOriginalData(data)
-			setIsEditMode(false)
-			setIsPreviewMode(false)
-			toast.success('保存成功！')
-		} catch (error: any) {
-			console.error('Failed to save:', error)
-			toast.error(`保存失败: ${error?.message || '未知错误'}`)
-		} finally {
-			setIsSaving(false)
-		}
-	}
-
-	const handleCancel = () => {
-		setData(originalData)
-		setIsEditMode(false)
-		setIsPreviewMode(false)
-	}
-
-	const buttonText = isAuth ? '保存' : '导入密钥'
-
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (!isEditMode && (e.ctrlKey || e.metaKey) && e.key === ',') {
-				e.preventDefault()
-				setIsEditMode(true)
-				setIsPreviewMode(false)
-			}
-		}
-
-		window.addEventListener('keydown', handleKeyDown)
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown)
-		}
-	}, [isEditMode])
+	const { items: articles, loading } = useBlogIndex()
+	const [searchTerm, setSearchTerm] = useState('')
+	const [selectedTag, setSelectedTag] = useState<string>('all')
+	
+	// 筛选出分类为"人物卡"的文章
+	const charaArticles = articles.filter(item => item.category === '人物卡')
+	
+	// 获取所有标签
+	const allTags = Array.from(new Set(charaArticles.flatMap(article => article.tags || [])))
+	
+	// 根据搜索词和标签筛选文章
+	const filteredArticles = charaArticles.filter(article => {
+		const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+									(article.summary && article.summary.toLowerCase().includes(searchTerm.toLowerCase()))
+		const matchesTag = selectedTag === 'all' || (article.tags && article.tags.includes(selectedTag))
+		return matchesSearch && matchesTag
+	})
+	
+	console.log('Total articles:', articles.length)
+	console.log('charaArticles length:', charaArticles.length)
+	console.log('filteredArticles length:', filteredArticles.length)
+	console.log('allTags:', allTags)
 
 	return (
-		<>
-			<input
-				ref={keyInputRef}
-				type='file'
-				accept='.pem'
-				className='hidden'
-				onChange={async e => {
-					const f = e.target.files?.[0]
-					if (f) await handleChoosePrivateKey(f)
-					if (e.currentTarget) e.currentTarget.value = ''
-				}}
-			/>
+		<div className='mx-auto w-full max-w-[1920px] px-6 pt-24 pb-12'>
+			<div className='mb-8 space-y-4'>
+				<input
+					type='text'
+					placeholder='搜索人物卡...'
+					value={searchTerm}
+					onChange={e => setSearchTerm(e.target.value)}
+					className='focus:ring-brand mx-auto block w-full max-w-md rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:outline-none'
+				/>
 
-			<div className='flex flex-col items-center justify-center px-6 pt-32 pb-12 max-sm:px-0'>
-				<div className='w-full max-w-[800px]'>
-					{isEditMode ? (
-						isPreviewMode ? (
-							<div className='space-y-6'>
-								<div className='text-center'>
-									<h1 className='mb-4 text-4xl font-bold'>{data.title || '标题预览'}</h1>
-									<p className='text-secondary text-lg'>{data.description || '描述预览'}</p>
-								</div>
-
-								{loading ? (
-									<div className='text-secondary text-center'>预览渲染中...</div>
-								) : (
-									<div className='card relative p-6'>
-										<div className='prose prose-sm max-w-none'>{content}</div>
-									</div>
-								)}
-							</div>
-						) : (
-							<div className='space-y-6'>
-								<div className='space-y-4'>
-									<input
-										type='text'
-										placeholder='标题'
-										className='w-full px-4 py-3 text-center text-2xl font-bold'
-										value={data.title}
-										onChange={e => setData({ ...data, title: e.target.value })}
-									/>
-									<input
-										type='text'
-										placeholder='描述'
-										className='w-full px-4 py-3 text-center text-lg'
-										value={data.description}
-										onChange={e => setData({ ...data, description: e.target.value })}
-									/>
-								</div>
-
-								<div className='card relative'>
-									<textarea
-										placeholder='Markdown 内容'
-										className='min-h-[400px] w-full resize-none text-sm'
-										value={data.content}
-										onChange={e => setData({ ...data, content: e.target.value })}
-									/>
-								</div>
-							</div>
-						)
-					) : (
-						<>
-							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mb-12 text-center'>
-								<h1 className='mb-4 text-4xl font-bold'>{data.title}</h1>
-								<p className='text-secondary text-lg'>{data.description}</p>
-							</motion.div>
-
-							{loading ? (
-								<div className='text-secondary text-center'>加载中...</div>
-							) : (
-								<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className='card relative p-6'>
-									<div className='prose prose-sm max-w-none'>{content}</div>
-								</motion.div>
-							)}
-						</>
-					)}
-
-					<div className='mt-8 flex items-center justify-center gap-6'>
-						<motion.a
-							href='https://github.com/YYsuni/2025-blog-public'
-							target='_blank'
-							rel='noreferrer'
-							initial={{ opacity: 0, scale: 0.6 }}
-							animate={{ opacity: 1, scale: 1 }}
-							transition={{ delay: 0 }}
-							className='bg-card flex h-[53px] w-[53px] items-center justify-center rounded-full border'>
-							<GithubSVG />
-						</motion.a>
-
-						<LikeButton slug='open-source' delay={0} />
-					</div>
+				<div className='flex flex-wrap justify-center gap-2'>
+					<button
+						onClick={() => setSelectedTag('all')}
+						className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+							selectedTag === 'all' ? 'bg-brand text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+						}`}>
+						全部
+					</button>
+					{allTags.map(tag => (
+						<button
+							key={tag}
+							onClick={() => setSelectedTag(tag)}
+							className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+								selectedTag === tag ? 'bg-brand text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+							}`}>
+							{tag}
+						</button>
+					))}
 				</div>
 			</div>
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='fixed top-4 right-6 z-10 flex gap-3 max-sm:hidden'>
-				{isEditMode ? (
-					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsPreviewMode(prev => !prev)}
-							disabled={isSaving}
-							className={`rounded-xl border bg-white/60 px-6 py-2 text-sm`}>
-							{isPreviewMode ? '继续编辑' : '预览'}
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
-							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
-					</>
-				) : (
-					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleEnterEditMode}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
-							编辑
-						</motion.button>
-					)
+			<div style={{ width: '100%', maxWidth: '1920px', margin: '0 auto', padding: '0 20px' }}>
+				<div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+					{filteredArticles.map((article, index) => (
+						<motion.div 
+							key={article.slug} 
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
+							transition={{ duration: 0.3 }}
+							style={{ 
+								width: '200px', 
+								height: '300px',
+								borderRadius: '0.75rem',
+								backgroundColor: 'rgba(255, 255, 255, 0.6)',
+								backdropFilter: 'blur(4px)',
+								flexShrink: 0,
+								border: '1px solid rgba(255, 255, 255, 0.8)',
+								boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+								overflow: 'hidden'
+							}}
+						>
+							<Link 
+								href={`/blog/${article.slug}`} 
+								style={{ 
+									display: 'block', 
+									height: '100%', 
+									textDecoration: 'none',
+									position: 'relative'
+								}}
+								onMouseEnter={(e) => {
+									const content = e.currentTarget.querySelector('.card-content');
+									if (content) {
+										content.style.transform = 'translateY(0)';
+										content.style.opacity = '1';
+									}
+								}}
+								onMouseLeave={(e) => {
+									const content = e.currentTarget.querySelector('.card-content');
+									if (content) {
+										content.style.transform = 'translateY(100%)';
+										content.style.opacity = '0';
+									}
+								}}
+							>
+								{/* 封面图片 */}
+								<div style={{ 
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									width: '100%', 
+									height: '100%', 
+									overflow: 'hidden'
+								}}>
+									{article.cover && (
+										<Image
+											src={article.cover}
+											alt={article.title}
+											width={200}
+											height={300}
+											style={{ 
+												objectFit: 'cover', 
+												width: '100%', 
+												height: '100%'
+											}}
+										/>
+									)}
+								</div>
+								
+								{/* 卡片内容 */}
+								<div className="card-content" style={{ 
+									position: 'absolute',
+									bottom: 0,
+									left: 0,
+									right: 0,
+									padding: '16px',
+									transition: 'transform 0.3s ease, opacity 0.3s ease',
+									transform: 'translateY(100%)',
+									opacity: 0,
+									background: 'rgba(0, 0, 0, 0.6)',
+									backdropFilter: 'blur(2px)'
+								}}>
+									<h2 style={{ 
+										fontSize: '1rem', 
+										fontWeight: '700', 
+										marginBottom: '8px', 
+										wordBreak: 'break-all', 
+										overflow: 'hidden', 
+										textOverflow: 'ellipsis', 
+										whiteSpace: 'nowrap', 
+										color: '#fff'
+									}}>
+										{article.title}
+									</h2>
+									
+									{/* 时间 */}
+									<div style={{ 
+										position: 'absolute',
+										bottom: '8px',
+										right: '8px'
+									}}>
+										<div style={{ 
+											fontSize: '0.75rem', 
+											color: '#fff'
+										}}>
+											{new Date(article.date).toLocaleDateString('zh-CN')}
+										</div>
+									</div>
+								</div>
+							</Link>
+						</motion.div>
+					))}
+				</div>
+
+				{filteredArticles.length === 0 && (
+					<div className='mt-12 text-center text-gray-500'>
+						<p>没有找到相关人物卡</p>
+					</div>
 				)}
-			</motion.div>
-		</>
+			</div>
+		</div>
 	)
 }
