@@ -65,7 +65,7 @@
 	],
 	"clockShowSeconds": false,
 	"summaryInContent": false,
-	"isCachePem": true,
+	"isCachePem": false,
 	"hideEditButton": false,
 	"enableCategories": true,
 	"currentHatIndex": 3,
