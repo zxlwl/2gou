@@ -1,8 +1,8 @@
 {
 	"meta": {
-		"title": "[贰狗日志]",
-		"description": "任贰狗的个人博客，发布一些日常收集来的软件、游戏，还有一些乱七八糟瞎折腾的研究笔记教程之类的。",
-		"username": "Ciao"
+		"title": "[lzx blog]",
+		"description": "lzwxx的个人blog",
+		"username": "blog"
 	},
 	"theme": {
 		"colorBrand": "#35bfab",
@@ -38,13 +38,6 @@
 	"currentBackgroundImageId": "",
 	"socialButtons": [
 		{
-			"id": "github",
-			"type": "github",
-			"value": "https://github.com/RT622",
-			"label": "Github",
-			"order": 3
-		},
-		{
 			"id": "juejin",
 			"type": "qq",
 			"value": "/images/social-buttons/7f509f0a4c020a31.png",
@@ -54,9 +47,16 @@
 		{
 			"id": "email",
 			"type": "email",
-			"value": "Twodog@88.com",
+			"value": "lzx1398@outlook.com",
 			"label": "",
 			"order": 1
+		},
+		{
+			"id": "button-1770559451876",
+			"type": "qq",
+			"value": "3492416851",
+			"label": "",
+			"order": 3
 		}
 	],
 	"clockShowSeconds": false,
