@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"title": "[lzx blog]",
+		"title": "lzx blog",
 		"description": "lzwxx的个人blog",
 		"username": "blog"
 	},
@@ -38,13 +38,6 @@
 	"currentBackgroundImageId": "",
 	"socialButtons": [
 		{
-			"id": "juejin",
-			"type": "qq",
-			"value": "/images/social-buttons/7f509f0a4c020a31.png",
-			"label": "稀土掘金",
-			"order": 2
-		},
-		{
 			"id": "email",
 			"type": "email",
 			"value": "lzx1398@outlook.com",
@@ -69,10 +62,10 @@
 	"enableChristmas": true,
 	"enablePasswordAccess": true,
 	"passwordAccessCategories": [
-		"Chara",
-		"Games"
+		"Tutorial",
+		"Share"
 	],
-	"passwordAccessPassword": "110110",
+	"passwordAccessPassword": "lzx123456",
 	"beian": {
 		"text": "",
 		"link": ""

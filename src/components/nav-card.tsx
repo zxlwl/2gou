@@ -34,14 +34,14 @@ const list = [
 	{
 		icon: ProjectsOutlineSVG,
 		iconActive: ProjectsFilledSVG,
-		label: '精品游戏',
-		href: '/Games'
+		label: '分享教程',
+		href: '/Tutorial'
 	},
 	{
 		icon: AboutOutlineSVG,
 		iconActive: AboutFilledSVG,
-		label: '人物卡片',
-		href: '/Chara'
+		label: '分享内容',
+		href: '/Share'
 	},
 	{
 		icon: ShareOutlineSVG,
